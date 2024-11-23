@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor de Sensor de Humo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #smoke-level {
+            font-size: 2em;
+        }
+        #alert {
+            font-size: 1.5em;
+            color: green;
+        }
+        .alert {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Monitor de Sensor de Humo IoT</h1>
+    <div id="smoke-level">Nivel de humo: 0</div>
+    <div id="alert">Todo bajo control</div>
+
+    <!-- Cargar librería Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        // Conectar con el servidor SocketIO
+        var socket = io.connect('http://127.0.0.1:5000');
+
+        // Escuchar el evento 'update_data' enviado desde el backend Flask
+        socket.on('update_data', function(data) {
+            var smokeLevel = data.smoke_level;
+            var alertMessage = data.alert_message;
+            
+            // Actualizar el nivel de humo en la pantalla
+            document.getElementById("smoke-level").innerText = "Nivel de humo: " + smokeLevel;
+
+            // Mostrar alerta si el nivel de humo es alto
+            if (alertMessage) {
+                document.getElementById("alert").innerText = "¡ALERTA ALTA!";
+                document.getElementById("alert").classList.add("alert");
+            } else {
+                document.getElementById("alert").innerText = "Todo bajo control";
+                document.getElementById("alert").classList.remove("alert");
+            }
+        });
+    </script>
+</body>
+</html>
